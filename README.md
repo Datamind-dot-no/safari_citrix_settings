@@ -13,6 +13,9 @@ Get Safari to work OK with a Citrix portal using PyObjC
 * Uses CoreFoundation PyObjC CoreFoundation to support cached prefs and to avoid need for app restart
 * Does not lock down settings like a configuration profile would, suitable for e.g. run-once to provide initial settings
 * Does not overwrite existing category lists of safe extensions, strives to be omnipotent
+* pkg is built using munkipkg which installs main script (safari_citrix_settings.py) in /Library/Management/
+* run munki_postinstall.sh from your software management solution to call the main script with full disk access permission, tested with VMWAre Workspace ONE
+
 
 ## Caveats:
 * In order to ensure Open Safe Downloads is enabled, this script needs to be run from an executable with full disk access because on recent systems Safari prefs are sandboxed and SIP is enabled by default.
