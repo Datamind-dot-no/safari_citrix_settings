@@ -1,0 +1,5 @@
+.	40755	0/0
+./Library	40755	0/0
+./Library/Management	40755	0/0
+./Library/Management/._safari_citrix_settings.py	100755	0/0	0	0
+./Library/Management/safari_citrix_settings.py	100755	0/0	6351	53879552
