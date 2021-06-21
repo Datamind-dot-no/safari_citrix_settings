@@ -95,26 +95,26 @@ def main():
     if os.path.isdir(homeDirectory + "/Library/Containers/com.apple.Safari"):
         app_ID = homeDirectory + "/Library/Containers/com.apple.Safari/Data/Library/Preferences/com.apple.Safari"
         safari_prefs_path = app_ID + ".plist"
+        # test if script has access, SIP will limit access to container contents, must run from app with full disk access priviledge
+        if os.access(safari_prefs_path, os.W_OK):
+            print 'Access OK to sandboxed Safari prefs at' + safari_prefs_path
+        else:
+            sys.exit('No access to sandboxed Safari prefs at' + safari_prefs_path + ' - bailing out')
     else:
         # must be old version - not sandboxed yet
         app_ID = 'com.apple.Safari'
         safari_prefs_path = homeDirectory + "/Library/Preferences/" + app_ID + ".plist"
-        cur_open_safe_downloads = CoreFoundation.CFPreferencesCopyAppValue( "AutoOpenSafeDownloads", app_ID )
+    cur_open_safe_downloads = CoreFoundation.CFPreferencesCopyAppValue( "AutoOpenSafeDownloads", app_ID )
     if cur_open_safe_downloads is None:
-        print app_ID + ' AutoOpenSafeDownloads key is not present, it defaults to True'
+        print 'Open safe Downloads for Safari prefs key AutoOpenSafeDownloads key is not present in ' + safari_prefs_path + ' - it defaults to True so that''s OK'
     else:
         if not cur_open_safe_downloads:
             print 'Open safe Downloads is not enabled in ' + safari_prefs_path
-            # test if script has access, SIP will limit access to container contents, must run from entitled app with full disk access
-            if os.access(safari_prefs_path, os.W_OK):
-                print 'Access OK to Safari prefs at' + safari_prefs_path
-            else:
-                sys.exit('No access to Safari prefs at' + safari_prefs_path + ' - bailing out')
             CoreFoundation.CFPreferencesSetAppValue( "AutoOpenSafeDownloads", True, app_ID )
             CoreFoundation.CFPreferencesAppSynchronize( app_ID )
-            print app_ID + ' AutoOpenSafeDownloads now set to true'
+            print 'Open safe Downloads is now set to True for Safari in ' + safari_prefs_path
         else:
-            print 'Open safe Downloads already enabled in ' + safari_prefs_path
+            print 'Open safe Downloads for Safari already enabled in ' + safari_prefs_path
 
     sys.exit(0)
 

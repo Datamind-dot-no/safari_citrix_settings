@@ -29,3 +29,10 @@ https://www.blackmanticore.com/1c569206754935dacb0dc6b89ca818b8
 https://gist.github.com/gregneagle/010b369e86410a2f279ff8e980585c68
 https://gist.github.com/gregneagle/01c99322cf985e771827
 https://lapcatsoftware.com/articles/containers.html
+
+
+## Testing / Troubleshooting:
+* Forget installed package
+> sudo pkgutil --forget no.datamind.munki.pkg.safari_citrix_settings
+* check if sandboxed Safari pref for open safe downloads was applied
+> defaults read ~/Library/Containers/com.apple.Safari/Data/Library/Preferences/com.apple.Safari.plist AutoOpenSafeDownloads
