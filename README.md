@@ -1,5 +1,5 @@
 # safari_citrix_settings
-Get Safari to work OK with a Citrix portal using PyObjC
+Get Safari to work btter with a Citrix portal using PyObjC, and open Citrix application shortcuts (.ica) open in Citrix Workspace automatically.
 
 ## Purpose:
 * ensure .ica is in (Safari) com.apple.DownloadAssessment download Safe category extensions,
