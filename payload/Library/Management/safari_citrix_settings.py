@@ -1,6 +1,6 @@
-#!/usr/bin/python
+#!/Library/ManagedFrameworks/Python/Python3.framework/Versions/Current/bin/python3
 
-'''
+"""
 safari_citrix_settings.py
 
 Purpose:
@@ -22,14 +22,14 @@ Caveats:
     and SIP is enabled by default.
 
 ToDo:
-    No check yet if prefs were actually stored, future changes like sandboxing might cause issue.
+    check if prefs were actually stored, future changes like sandboxing might cause issue.
 
 Thanks to:
     https://www.blackmanticore.com/1c569206754935dacb0dc6b89ca818b8
     https://gist.github.com/gregneagle/010b369e86410a2f279ff8e980585c68
     https://gist.github.com/gregneagle/01c99322cf985e771827
     https://lapcatsoftware.com/articles/containers.html
-'''
+"""
 
 # import plistlib
 import os.path
@@ -37,11 +37,13 @@ import sys
 import CoreFoundation
 from Foundation import NSMutableArray, NSMutableDictionary, NSHomeDirectory
 
+
 def setDownloadAssessmentCategory(extension, risk_category):
-    risk_categories = { 'LSRiskCategorySafe', 'LSRiskCategoryNeutral', 'LSRiskCategoryUnsafeExecutable', 'LSRiskCategoryMayContainUnsafeExecutable' }
+    risk_categories = {'LSRiskCategorySafe', 'LSRiskCategoryNeutral', 'LSRiskCategoryUnsafeExecutable',
+                       'LSRiskCategoryMayContainUnsafeExecutable'}
     for arisk_category in risk_categories:
         # read the dict with current category of safe extensions - gets an immutable return object
-        cur_risk_category = CoreFoundation.CFPreferencesCopyAppValue( arisk_category, "com.apple.DownloadAssessment")
+        cur_risk_category = CoreFoundation.CFPreferencesCopyAppValue(arisk_category, "com.apple.DownloadAssessment")
 
         if cur_risk_category:
             # copy immutable dict to new mutable one
@@ -60,33 +62,37 @@ def setDownloadAssessmentCategory(extension, risk_category):
         if arisk_category == risk_category:
             if not extension in my_risk_category['LSRiskCategoryExtensions']:
                 my_risk_category['LSRiskCategoryExtensions'].append(extension)
-                print 'Adding extension "%s" to risk category array "%s" of com.apple.DownloadAssessment' % (extension, risk_category)
+                print(
+                    f'Adding extension {extension} to risk category array {risk_category} of com.apple.DownloadAssessment')
             else:
-                print 'extension "%s" is already present in risk category array "%s" of com.apple.DownloadAssessment' % (extension, risk_category)
+                print(
+                    f'extension {extension} is already present in risk category array {risk_category} of com.apple.DownloadAssessment')
         else:
             # ensure the_extension is NOT in any of the remaining categories
             if extension in my_risk_category['LSRiskCategoryExtensions']:
                 my_risk_category['LSRiskCategoryExtensions'].remove(extension)
-                print 'Removing extension "%s" from risk category array "%s" of com.apple.DownloadAssessment' % (extension, arisk_category)
+                print(
+                    f'Removing extension {extension} from risk category array {arisk_category} of com.apple.DownloadAssessment')
             # save the changed preference
-        CoreFoundation.CFPreferencesSetAppValue(arisk_category, my_risk_category,  "com.apple.DownloadAssessment")
+        CoreFoundation.CFPreferencesSetAppValue(arisk_category, my_risk_category, "com.apple.DownloadAssessment")
     CoreFoundation.CFPreferencesAppSynchronize("com.apple.DownloadAssessment")
-
 
 
 def main():
     # ensure .ica is in Safari category for Safe download extensions
     setDownloadAssessmentCategory('ica', 'LSRiskCategorySafe')
+    # ensure .tgx is in Safari category for Safe download extensions
+    setDownloadAssessmentCategory('tgx', 'LSRiskCategorySafe')
     # for testing:
-    #setDownloadAssessmentCategory('zip', 'LSRiskCategoryNeutral')
+    # setDownloadAssessmentCategory('zip', 'LSRiskCategoryNeutral')
 
     # ensure Citrix Workspace AutoUpdate is set to manual
-    cur_citrix_autoupdate = CoreFoundation.CFPreferencesCopyAppValue( "AutoUpdateState", "com.citrix.receiver.nomas" )
+    cur_citrix_autoupdate = CoreFoundation.CFPreferencesCopyAppValue("AutoUpdateState", "com.citrix.receiver.nomas")
     if not cur_citrix_autoupdate == "Manual":
-        CoreFoundation.CFPreferencesSetAppValue( "AutoUpdateState", "Manual", "com.citrix.receiver.nomas" )
-        print 'Citrix preference com.citrix.receiver.nomas AutoUpdateState set to Manual'
+        CoreFoundation.CFPreferencesSetAppValue("AutoUpdateState", "Manual", "com.citrix.receiver.nomas")
+        print('Citrix preference com.citrix.receiver.nomas AutoUpdateState set to Manual')
     else:
-        print 'Citrix preference com.citrix.receiver.nomas AutoUpdateState already set to Manual'
+        print('Citrix preference com.citrix.receiver.nomas AutoUpdateState already set to Manual')
 
     # ensure AutoOpenSafeDownloads is on for com.apple.Safari
     # test if Safari version is Sandboxed by checking for container
@@ -95,29 +101,30 @@ def main():
     if os.path.isdir(homeDirectory + "/Library/Containers/com.apple.Safari"):
         app_ID = homeDirectory + "/Library/Containers/com.apple.Safari/Data/Library/Preferences/com.apple.Safari"
         safari_prefs_path = app_ID + ".plist"
-        # test if script has access, SIP will limit access to container contents, must run from app with full disk access priviledge
+        # test if script has access, SIP will limit access to container contents, must run from app with full disk
+        # access privilege
         if os.access(safari_prefs_path, os.W_OK):
-            print 'Access OK to sandboxed Safari prefs at' + safari_prefs_path
+            print(f'Access OK to sandboxed Safari prefs at {safari_prefs_path}')
         else:
-            sys.exit('No access to sandboxed Safari prefs at' + safari_prefs_path + ' - bailing out')
+            sys.exit(f'No access to sandboxed Safari prefs at {safari_prefs_path} - bailing out')
     else:
         # must be old version - not sandboxed yet
         app_ID = 'com.apple.Safari'
         safari_prefs_path = homeDirectory + "/Library/Preferences/" + app_ID + ".plist"
-    cur_open_safe_downloads = CoreFoundation.CFPreferencesCopyAppValue( "AutoOpenSafeDownloads", app_ID )
+    cur_open_safe_downloads = CoreFoundation.CFPreferencesCopyAppValue("AutoOpenSafeDownloads", app_ID)
     if cur_open_safe_downloads is None:
-        print 'Open safe Downloads for Safari prefs key AutoOpenSafeDownloads key is not present in ' + safari_prefs_path + ' - it defaults to True so that''s OK'
+        print(
+            f'Open safe Downloads for Safari prefs key AutoOpenSafeDownloads key is not present in {safari_prefs_path} - it defaults to True so that''s OK')
     else:
         if not cur_open_safe_downloads:
-            print 'Open safe Downloads is not enabled in ' + safari_prefs_path
-            CoreFoundation.CFPreferencesSetAppValue( "AutoOpenSafeDownloads", True, app_ID )
-            CoreFoundation.CFPreferencesAppSynchronize( app_ID )
-            print 'Open safe Downloads is now set to True for Safari in ' + safari_prefs_path
+            print(f'Open safe Downloads is not enabled in {safari_prefs_path}')
+            CoreFoundation.CFPreferencesSetAppValue("AutoOpenSafeDownloads", True, app_ID)
+            CoreFoundation.CFPreferencesAppSynchronize(app_ID)
+            print(f'Open safe Downloads is now set to True for Safari in {safari_prefs_path}')
         else:
-            print 'Open safe Downloads for Safari already enabled in ' + safari_prefs_path
+            print(f'Open safe Downloads for Safari already enabled in {safari_prefs_path}')
 
     sys.exit(0)
-
 
 
 if __name__ == '__main__':

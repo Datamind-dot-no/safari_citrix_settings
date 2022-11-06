@@ -5,7 +5,7 @@
 	<key>distribution_style</key>
 	<false/>
 	<key>identifier</key>
-	<string>no.datamind.munki.pkg.safari_citrix_settings</string>
+	<string>no.datamind.munkipkg.safari_citrix_settings</string>
 	<key>install_location</key>
 	<string>/</string>
 	<key>name</key>
@@ -19,6 +19,6 @@
 	<key>suppress_bundle_relocation</key>
 	<true/>
 	<key>version</key>
-	<string>0.0.8</string>
+	<string>0.1.0</string>
 </dict>
 </plist>
