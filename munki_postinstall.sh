@@ -2,7 +2,7 @@
 
 ###########################      About this script      ##########################
 #                                                                                #
-#   safari_citrix_settings.py - (Munki)postinstall script                        #                                  #
+#   safari_citrix_settings.py - (Munki)postinstall script                        #
 #                                                                                #
 #   Purpose:                                                                     #
 #           call safari_citrix_settings.py script as console user                #
@@ -19,7 +19,7 @@
 #                                                                                #
 #                                                                                #
 #   Instructions                                                                 #
-#            designed to run by software management application                  #
+#            designed to run by software management application as console user  #
 #            such as VMware Workspace ONE, Munki                                 #
 #            MUST be run from process entitled to full disk access in order to   #
 #            write to sandboxed Safari settings                                  #
